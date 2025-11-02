@@ -1,0 +1,6 @@
+[submodule "RemitContract/lib/forge-std"]
+	path = RemitContract/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "RemitContract/lib/openzeppelin-contracts"]
+	path = RemitContract/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
