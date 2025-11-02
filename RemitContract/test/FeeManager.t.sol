@@ -30,6 +30,7 @@ contract FeeManagerTest is Test {
     function testConstructor() public {
         assertEq(feeManager.feeRate(), 50);
         assertEq(feeManager.feeRecipient(), feeRecipient);
+        assertEq(feeManager.coreContract(), core);
     }
 
     function testCalculateFee() public view {
@@ -50,10 +51,9 @@ contract FeeManagerTest is Test {
     }
 
     function testRecordFee() public {
-        // recordFee has require(msg.sender == address(this))
-        // So we need to call it from the FeeManager contract itself
-        // We'll use vm.prank to impersonate the FeeManager contract
-        vm.prank(address(feeManager));
+        // recordFee can only be called by the core contract
+        // We'll use vm.prank to impersonate the core contract
+        vm.prank(core);
         feeManager.recordFee(address(mockToken), 100);
         assertEq(feeManager.collectedFees(address(mockToken)), 100);
     }
@@ -63,14 +63,13 @@ contract FeeManagerTest is Test {
         // Transfer tokens to FeeManager first
         mockToken.transfer(address(feeManager), feeAmount);
         
-        // Record the fee (from FeeManager's perspective)
-        vm.prank(address(feeManager));
+        // Record the fee (from core's perspective)
+        vm.prank(core);
         feeManager.recordFee(address(mockToken), feeAmount);
         
         uint256 balanceBefore = mockToken.balanceOf(feeRecipient);
 
-        // Withdraw as admin (from test contract's perspective - which is admin)
-        vm.prank(address(feeManager));
+        // Withdraw as admin (test contract is admin by default)
         feeManager.withdrawFees(address(mockToken), feeAmount);
 
         assertEq(feeManager.collectedFees(address(mockToken)), 0);
@@ -78,7 +77,6 @@ contract FeeManagerTest is Test {
     }
 
     function testCannotWithdrawMoreThanCollected() public {
-        vm.prank(address(feeManager));
         vm.expectRevert("Exceeds collected fees");
         feeManager.withdrawFees(address(mockToken), 100);
     }
@@ -101,9 +99,12 @@ contract FeeManagerTest is Test {
     function testOnlyAdminCanWithdraw() public {
         address nonAdmin = address(0x123);
         
-        // Record a fee first
-        vm.prank(address(feeManager));
+        // Record a fee first (from core's perspective)
+        vm.prank(core);
         feeManager.recordFee(address(mockToken), 100);
+        
+        // Transfer tokens to FeeManager
+        mockToken.transfer(address(feeManager), 100);
         
         bytes32 adminRole = feeManager.ADMIN_ROLE();
         
@@ -116,5 +117,41 @@ contract FeeManagerTest is Test {
             )
         );
         feeManager.withdrawFees(address(mockToken), 100);
+    }
+
+    function testOnlyCoreCanRecordFee() public {
+        address nonCore = address(0x456);
+        
+        vm.prank(nonCore);
+        vm.expectRevert("Only core contract");
+        feeManager.recordFee(address(mockToken), 100);
+    }
+
+    function testSetCoreContract() public {
+        address newCore = address(0x789);
+        
+        feeManager.setCoreContract(newCore);
+        assertEq(feeManager.coreContract(), newCore);
+        
+        // Test that the new core can call recordFee
+        vm.prank(newCore);
+        feeManager.recordFee(address(mockToken), 100);
+        assertEq(feeManager.collectedFees(address(mockToken)), 100);
+    }
+
+    function testOnlyAdminCanSetCoreContract() public {
+        address nonAdmin = address(0x123);
+        address newCore = address(0x789);
+        bytes32 adminRole = feeManager.ADMIN_ROLE();
+        
+        vm.prank(nonAdmin);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                bytes4(keccak256("AccessControlUnauthorizedAccount(address,bytes32)")),
+                nonAdmin,
+                adminRole
+            )
+        );
+        feeManager.setCoreContract(newCore);
     }
 }
