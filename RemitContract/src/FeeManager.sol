@@ -13,6 +13,8 @@ contract FeeManager is AccessControlManager {
     uint256 public feeRate;
     /// @notice Address to receive withdrawn fees
     address public feeRecipient;
+    /// @notice Address of the RemitAbegCore contract
+    address public coreContract;
     /// @notice Accumulated fees per token
     mapping(address => uint256) public collectedFees;
 
@@ -20,6 +22,8 @@ contract FeeManager is AccessControlManager {
     event FeeRateUpdated(uint256 indexed newRate);
     /// @notice Emitted when fees are withdrawn
     event FeesWithdrawn(address indexed token, uint256 amount);
+    /// @notice Emitted when core contract is updated
+    event CoreContractUpdated(address indexed newCore);
 
     /// @notice Constructor sets initial fee rate and recipient; requires Core address for validation
     /// @param _core Address of the RemitAbegCore contract
@@ -29,6 +33,15 @@ contract FeeManager is AccessControlManager {
         require(_feeRecipient != address(0), "Invalid fee recipient");
         feeRate = 50; // Default 0.5%
         feeRecipient = _feeRecipient;
+        coreContract = _core;
+    }
+
+    /// @notice Update the core contract address (admin only)
+    /// @param _newCore New core contract address
+    function setCoreContract(address _newCore) external onlyRole(ADMIN_ROLE) {
+        require(_newCore != address(0), "Invalid core address");
+        coreContract = _newCore;
+        emit CoreContractUpdated(_newCore);
     }
 
     /// @notice Update the platform fee rate (admin only)
@@ -50,7 +63,7 @@ contract FeeManager is AccessControlManager {
     /// @param token Token address
     /// @param fee Fee amount collected
     function recordFee(address token, uint256 fee) external {
-        require(msg.sender == address(this), "Only self"); // Enforced by Core transfer before call
+        require(msg.sender == coreContract, "Only core contract");
         collectedFees[token] += fee;
     }
 
