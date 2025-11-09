@@ -1,7 +1,14 @@
 'use client'
 
 import { useEffect } from 'react'
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Navbar"
+import StatsSection from "@/components/landing/StatsSection"
+import FeatureCard from "@/components/landing/FeatureCard"
+import TestimonialCard from "@/components/landing/TestimonialCard"
+import FAQSection from "@/components/landing/FAQSection"
+import PricingSection from "@/components/landing/PricingSection"
+import SecuritySection from "@/components/landing/SecuritySection"
+import NewsletterSection from "@/components/landing/NewsletterSection"
 import { useAccount, useBalance } from 'wagmi'
 import { useAppKitAccount, useAppKit } from '@reown/appkit/react'
 import { toast } from 'react-toastify'
@@ -150,70 +157,70 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <StatsSection />
+
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
+      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
               Everything You Need
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Fast, cheap, and transparent remittances
+              Fast, cheap, and transparent remittances powered by blockchain technology
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Feature 1 */}
-            <div className="bg-white border border-green-200 hover:border-green-400 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-6 text-4xl">
-                ⚡
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Speed
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Transactions settle in minutes, not days. No more waiting around.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="bg-white border border-green-200 hover:border-green-400 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mb-6 text-4xl">
-                💸
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Low Fees
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Powered by DeFi rails. Keep more of your money where it belongs.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="bg-white border border-green-200 hover:border-green-400 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 text-4xl">
-                🔍
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Transparency
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Real-time confirmations. See exactly where your money is going.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="bg-white border border-green-200 hover:border-green-400 rounded-2xl p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-700 rounded-xl flex items-center justify-center mb-6 text-4xl">
-                🤝
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Community First
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Built for Naija and the African diaspora. By us, for us.
-              </p>
-            </div>
+            <FeatureCard
+              icon="⚡"
+              title="Instant Settlements"
+              description="Transactions settle in under 2 minutes. No more waiting days for your money to arrive."
+              gradient="bg-gradient-to-br from-green-500 to-green-600"
+            />
+            <FeatureCard
+              icon="💸"
+              title="Ultra-Low Fees"
+              description="Just 0.5% per transaction. Save up to 90% compared to traditional services."
+              gradient="bg-gradient-to-br from-yellow-500 to-yellow-600"
+            />
+            <FeatureCard
+              icon="🔍"
+              title="Full Transparency"
+              description="Track every transaction on the blockchain. Real-time confirmations and complete visibility."
+              gradient="bg-gradient-to-br from-blue-500 to-blue-600"
+            />
+            <FeatureCard
+              icon="🌍"
+              title="Borderless Transfers"
+              description="Send money anywhere, anytime. No geographical restrictions or banking hours."
+              gradient="bg-gradient-to-br from-purple-500 to-purple-600"
+            />
+            <FeatureCard
+              icon="🔒"
+              title="Bank-Grade Security"
+              description="Smart contracts audited by leading firms. Your funds are protected 24/7."
+              gradient="bg-gradient-to-br from-red-500 to-red-600"
+            />
+            <FeatureCard
+              icon="📱"
+              title="Mobile-First Design"
+              description="Optimized for mobile devices. Send money on the go with ease."
+              gradient="bg-gradient-to-br from-indigo-500 to-indigo-600"
+            />
+            <FeatureCard
+              icon="🤝"
+              title="Community Driven"
+              description="Built for Naija and the African diaspora. By us, for us."
+              gradient="bg-gradient-to-br from-green-600 to-green-700"
+            />
+            <FeatureCard
+              icon="💱"
+              title="Multi-Currency Support"
+              description="Support for stablecoins and major cryptocurrencies. More options coming soon."
+              gradient="bg-gradient-to-br from-orange-500 to-orange-600"
+            />
           </div>
         </div>
       </section>
